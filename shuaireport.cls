@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{shuaibeamer}[2022/09/12 0.1.0 Beamer Template for Weekly Reports at Shuai Group]
+\ProvidesClass{shuaibeamer}[2023/11/28 0.1.1 Beamer Template for Weekly Reports at Shuai Group]
 
 \PassOptionsToClass{
   10pt,
@@ -19,6 +19,7 @@
   caption,
   % chemfig,
   % footmisc,
+  fontawesome5,
   graphicx,
   listings,
   % siunitx,
@@ -27,6 +28,11 @@
   % witharrows,
   xeCJKfntef,
   xkcdcolors
+}
+
+\usepackage{
+  shuaireport-symb,
+  shuaireport-op
 }
 
 \RequirePackage[backend=biber, style=chem-acs]{biblatex}

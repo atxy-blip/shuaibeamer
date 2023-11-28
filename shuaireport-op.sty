@@ -1,0 +1,58 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesExplPackage{shuaireport-op}{2023-11-28}{0.1}
+  {Operator macros for shuaireport}
+
+\RequirePackage{xkcdcolors, unicode-math}
+
+% https://tex.stackexchange.com/a/17119
+\prg_set_conditional:Npnn \__shuairep_op_is_num:n #1 { T }
+  {
+    \sbox \z@{\@tempcnta=0#1\relax}
+    \ifdim\wd0 > \z@ \relax
+      \prg_return_false:
+    \else:
+      \prg_return_true:
+    \fi:
+  }
+
+\cs_new:Npn \__shuairep_op_aux:n #1
+  {
+    \IfNoValueF {#1}
+      {
+        \int_compare:nTF { \clist_count:n {#1} = 1 }
+          { \__shuairep_op_is_num:nT {#1} {+} #1 }
+          { + \clist_use:Nn #1 { } }
+      }
+  }
+
+\cs_new_eq:NN \op@subscript \__shuairep_op_aux:n
+
+\ExplSyntaxOff
+% to enable _ for math subscripts
+
+\NewDocumentCommand\Op{ m m m t+ o }{
+  % #1: color
+  % #2: operator name
+  % #3: main underscript
+  % #4: \dagger symbol
+  % #5: hopping number, additional subscript
+  \textcolor{#1}{
+      \hat {#2} _ { #3 \op@subscript{#5} }
+      \IfBooleanT {#4} { ^{\dagger} }
+    }
+}
+
+\ExplSyntaxOff
+\newcommand{\Opa}{\Op{xkcdLightMaroon}{a}}
+\newcommand{\Opb}{\Op{xkcdMarineBlue!90}{b}}
+\newcommand{\Opc}{\Op{xkcdBritishRacingGreen!90}{c}}
+
+\newcommand{\Opam}{\Opa{m}}
+\newcommand{\Opaj}{\Opa{j}}
+
+\newcommand{\Opbm}{\Opb{m}}
+
+\newcommand{\Opcm}{\Opc{m}}
+
+\endinput
+%% tests: \[ \Opam \Opam+[1] \Opam[\uparrow] \Opam[2,\uparrow] \]
