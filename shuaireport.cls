@@ -44,6 +44,7 @@
 % \setbeamercolor{background canvas}{bg=yellow!50!white}
 \setbeamercolor{palette primary}{bg=thuviolet}
 \setbeamercolor{normal text}{fg=black!90,bg=black!2}
+\setbeamercolor{progress bar}{fg=thuviolet,bg=thuviolet!20}
 % \setbeamercolor{frametitle}{bg=thuviolet}
 \metroset{progressbar=none}
 \setbeamerfont{title}{size=\Huge, series=\bfseries}
@@ -230,7 +231,10 @@
   \endgroup
 }
 
-\renewcommand\vec{\symbf}
+\newcommand{\reno}{\textsc{Renormalizer}}
+
+\newcommand{\link}[1]{\href{#1}{\textcolor{thuviolet}{\faLink}}}
+
 % \renewcommand{\emph}[1]{\begingroup\bfseries\itshape#1\endgroup}
 
 \newcommand{\vemph}[1]{\textcolor{thuviolet}{\bfseries#1}}
@@ -238,4 +242,19 @@
 
 \hypersetup{
   pdfauthor = {yuxiong}
+}
+
+\newcommand{\lastpage}[1]{
+  \setbeamertemplate{frame numbering}[none]
+  \begin{frame}[standout]{#1}
+    \vspace*{.6cm}
+    \Huge
+    % \hphantom{！}
+    欢迎指正！
+
+    \vspace*{0.2cm}
+    \Large
+    \href{https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.zh-Hans}{
+      \faCreativeCommons\,\faCreativeCommonsBy\,\faCreativeCommonsNc\,\faCreativeCommonsSa}
+  \end{frame}
 }
