@@ -4,6 +4,9 @@
 *.blg
 *.fdb_latexmk
 *.fls
+*.glo
+*.hd
+*.idx
 *.ilg
 *.ind
 *.lof
@@ -22,8 +25,12 @@
 *.txt
 *.make.tex
 
+*.sty
+*.cls
+
 main.pdf
 
+build/
 fonts/
 temp/
 !figure/
