@@ -7,5 +7,5 @@ charset = utf-8
 end_of_line = lf
 indent_style = space
 
-[*.{cls,sty,tex,bib}]
+[*.{cls,sty,dtx,tex,bib}]
 indent_size = 2

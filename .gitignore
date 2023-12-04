@@ -4,6 +4,9 @@
 *.blg
 *.fdb_latexmk
 *.fls
+*.glo
+*.hd
+*.idx
 *.ilg
 *.ind
 *.lof
@@ -22,8 +25,15 @@
 *.txt
 *.make.tex
 
-main.pdf
+*.tex
+*.sty
+*.cls
 
+main.pdf
+shuaibeamer.pdf
+*.zip
+
+build/
 fonts/
 temp/
 !figure/
