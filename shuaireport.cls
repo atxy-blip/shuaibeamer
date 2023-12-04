@@ -30,7 +30,11 @@
   xkcdcolors
 }
 
-\usepackage{
+\RequirePackage{physics2, fixdif}
+
+\usephysicsmodule{ab, ab.braket}
+
+\RequirePackage{
   shuaireport-symb,
   shuaireport-op
 }

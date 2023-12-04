@@ -22,8 +22,9 @@
 *.txt
 *.make.tex
 
-*.pdf
+main.pdf
 
 fonts/
 temp/
 !figure/
+!figures/
