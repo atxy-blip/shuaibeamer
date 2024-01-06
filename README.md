@@ -1,4 +1,4 @@
-# shuai-group-report
+# `shuaibeamer` class for group reports
 
 Beamer template for use in group reports, with minor modifications based on the [Metropolis theme](https://ctan.org/pkg/beamertheme-metropolis).
 To install the template with tlmgr, use the command `l3build install` under the source directory.

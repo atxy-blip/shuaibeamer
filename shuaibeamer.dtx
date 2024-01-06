@@ -135,9 +135,11 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 % \setbeamercolor{background canvas}{bg=yellow!50!white}
 \setbeamercolor{palette primary}{bg=thuviolet}
-\setbeamercolor{normal text}{fg=black!90,bg=black!2}
-\setbeamercolor{progress bar}{fg=thuviolet,bg=thuviolet!20}
-% \setbeamercolor{frametitle}{bg=thuviolet}
+\setbeamercolor{normal text}{fg=black!90, bg=black!2}
+\setbeamercolor{progress bar}{fg=thuviolet, bg=thuviolet!20}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{subtitle}{fg=black}
+\setbeamercolor{frametitle}{fg=thuviolet, bg={}}
 \metroset{progressbar=none}
 \setbeamerfont{title}{size=\Huge, series=\bfseries}
 \setbeamerfont*{subtitle}{size=\Large, shape=\itshape}
@@ -351,7 +353,9 @@ To produce the documentation run the original source files ending with
 %
 %    \begin{macrocode}
 \newcommand{\lastpage}[1]{
+  \begingroup
   \setbeamertemplate{frame numbering}[none]
+  \setbeamercolor{frametitle}{fg=white, bg={}}
   \begin{frame}[standout]{#1}
     \vspace*{.6cm}
     \Huge
@@ -362,6 +366,7 @@ To produce the documentation run the original source files ending with
     \href{https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.zh-Hans}{
       \faCreativeCommons\,\faCreativeCommonsBy\,\faCreativeCommonsNc\,\faCreativeCommonsSa}
   \end{frame}
+  \endgroup
 }
 %</class>
 %    \end{macrocode}
@@ -432,6 +437,11 @@ To produce the documentation run the original source files ending with
 }
 %    \end{macrocode}
 %
+%    \begin{macrocode}
+\newcommand{\Opp}{\Op{xkcdLightBrown}{p}}
+%    \end{macrocode}
+%
+% Operators with second quantization.
 %    \begin{macrocode}
 \newcommand{\Opa}{\Op{xkcdLightMaroon}{a}}
 \newcommand{\Opb}{\Op{xkcdMarineBlue!90}{b}}
