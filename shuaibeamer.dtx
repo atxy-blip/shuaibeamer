@@ -41,7 +41,7 @@ To produce the documentation run the original source files ending with
 %
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<*!(driver|install)>
-%<+!driver>\GetIdInfo $Id: shuaibeamer.dtx 0.2.0 2023-12-04 16:00:00
+%<+!driver>\GetIdInfo $Id: shuaibeamer.dtx 0.3.0 2024-04-28 20:30:00
 %<+!driver>  +0800 atxy <y-xiong22@mails.tsinghua.edu.cn>$
 %<class>  {Beamer Template for Weekly Reports at Shuai Group}
 %<class>\ProvidesExplClass{shuaibeamer}
@@ -54,8 +54,12 @@ To produce the documentation run the original source files ending with
 %
 %<*driver>
 \ProvidesFile{shuaibeamer.dtx}
-\documentclass[fontset=fandol]{ctxdoc}
+\documentclass[fontset=fandol, scheme=plain]{ctxdoc}
 \let\sty\cls
+\ExplSyntaxOn
+\cs_generate_variant:Nn \__codedoc_get_hyper_target:nN { x }
+\cs_generate_variant:Nn \tl_replace_all:Nnn { Non }
+\ExplSyntaxOff
 \begin{document}
   \DocInput{shuaibeamer.dtx}
   ^^A \PrintChanges
@@ -66,9 +70,9 @@ To produce the documentation run the original source files ending with
 %
 % \begin{implementation}
 %
-% \section{代码实现}
+% \section{Implementation}
 %
-% \subsection{准备}
+% \subsection{\cls{shuaibeamer.cls}}
 %
 %    \begin{macrocode}
 %<*class>
@@ -82,9 +86,10 @@ To produce the documentation run the original source files ending with
     handout  .code:n =
       { \PassOptionsToClass{ handout } { ctexbeamer } },
     symb .bool_set:N = \g_@@_load_symb_bool,
-    symb .initial:n  = { true },
+    symb  .initial:n = { true },
     op   .bool_set:N = \g_@@_load_op_bool,
-    op   .initial:n  = { true }
+    op    .initial:n = { true },
+    no-color .code:n = { \PassOptionsToPackage { no-color } { shuaibeamer-op } }
   }
 %    \end{macrocode}
 %
@@ -93,6 +98,7 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 %    \begin{macrocode}
+\PassOptionsToClass { onlytextwidth } { beamer }
 \PassOptionsToClass
   {
     10pt,
@@ -119,12 +125,10 @@ To produce the documentation run the original source files ending with
     caption,
     fontawesome5,
     graphicx,
-    listings,
     siunitx,
     unicode-math,
     physics2,
     fixdif,
-    xeCJKfntef,
     xkcdcolors
   }
 %    \end{macrocode}
@@ -141,7 +145,7 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\RequirePackage [ backend=biber, style=chem-acs ] { biblatex }
+\RequirePackage [ backend=biber, style=chem-acs, articletitle=true ] { biblatex }
 % \renewbibmacro*{author}{} % remove author field globally
 % \renewbibmacro*{editor}{}
 %    \end{macrocode}
@@ -150,6 +154,7 @@ To produce the documentation run the original source files ending with
 \definecolor { thuviolet } { HTML } { 660874 }
 %    \end{macrocode}
 %
+% Beamer colors
 %    \begin{macrocode}
 \ExplSyntaxOff
 % \setbeamercolor{background canvas}{bg=yellow!50!white}
@@ -159,7 +164,11 @@ To produce the documentation run the original source files ending with
 \setbeamercolor{title}{fg=black}
 \setbeamercolor{subtitle}{fg=black}
 \setbeamercolor{frametitle}{fg=thuviolet, bg={}}
-\metroset{progressbar=none}
+\setbeamercolor{title separator}{fg=thuviolet}
+%    \end{macrocode}
+%
+% Beamer fonts
+%    \begin{macrocode}
 \setbeamerfont{title}{size=\Huge, series=\bfseries}
 \setbeamerfont*{subtitle}{size=\Large, shape=\itshape}
 \setbeamerfont{author}{size=\Large}
@@ -171,7 +180,14 @@ To produce the documentation run the original source files ending with
 \setbeamerfont{footnote}{size=\tiny}
 % \setbeamercolor{footnote}{fg=red}
 \setbeamerfont{alerted text}{series=\bfseries}
-\setbeamercolor{title separator}{fg=thuviolet}
+%    \end{macrocode}
+%
+% Remove progress bar
+%    \begin{macrocode}
+\metroset{progressbar=none}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \setlength{\metropolis@titleseparator@linewidth}{1pt}
 %    \end{macrocode}
 %
@@ -231,13 +247,13 @@ To produce the documentation run the original source files ending with
 }
 %    \end{macrocode}
 %
-%    \begin{macrocode}
 % remove footnote rule
+%    \begin{macrocode}
 \def\footnoterule{}
 %    \end{macrocode}
 %
-%    \begin{macrocode}
 % Fonts
+%    \begin{macrocode}
 \setmainfont{LibertinusSerif}[
   Extension      = .otf,
   UprightFont    = *-Regular,
@@ -257,51 +273,71 @@ To produce the documentation run the original source files ending with
 \setCJKmonofont{Sarasa Mono SC}
 %    \end{macrocode}
 %
-%    \begin{macrocode}
 % Colors
-\colorlet{keyword}{xkcdTeal}
-\colorlet{comment}{xkcdBlack!50}
-\colorlet{texcs}{xkcdMagenta}
-\colorlet{emph1}{xkcdPurple}
-\colorlet{emph2}{xkcdCerulean}
-\colorlet{inline}{xkcdBurgundy}
-\colorlet{string}{xkcdWine}
+%    \begin{macrocode}
+\ExplSyntaxOn
+\cs_new:Npn \@@_set_listings_color:
+  {
+    \colorlet{keyword}{xkcdTeal}
+    \colorlet{comment}{xkcdBlack!50}
+    \colorlet{texcs}{xkcdMagenta}
+    \colorlet{emph1}{xkcdCerulean}
+    \colorlet{emph2}{xkcdPurple}
+    \colorlet{inline}{xkcdBurgundy}
+    \colorlet{string}{xkcdWine}
+  }
+%    \end{macrocode}
+%
+% Code listings
+%    \begin{macrocode}
+\cs_new:Npn \@@_set_listings_style:
+  {
+    \lstdefinestyle{style@python}{
+      language     = python,
+      basewidth    = 0.54em,
+      keywordstyle = \bfseries\color{keyword},
+      commentstyle = \itshape\color{comment},
+      emphstyle    = [1]\itshape\color{emph1},
+      emphstyle    = [2]\color{emph2},
+      stringstyle  = \color{string}
+    }
+    \lstdefinestyle{style@shell}{
+      language     = bash,
+      alsoletter   = {-},
+      basewidth    = 0.54em,
+      keywordstyle = \bfseries\color{keyword},
+      commentstyle = \itshape\color{comment},
+      emphstyle    = [1]\itshape\color{emph1},
+      emphstyle    = [2]\color{emph2}
+    }
+    \lstdefinestyle{style@inline}{
+      basicstyle   = \ttfamily\color{inline},
+      keepspaces   = true
+    }
+  }
+\cs_new:Npn \@@_set_listings_env:
+  {
+    \lstnewenvironment{pycode}[1][]{\lstset{
+      style        = style@python,
+      basicstyle   = \footnotesize\ttfamily,
+      gobble       = 2,##1}}{}
+    \lstnewenvironment{shcode}[1][]{\lstset{
+      style        = style@shell,
+      basicstyle   = \footnotesize\ttfamily\color{inline},
+      gobble       = 2,##1}}{}
+    % % \lstMakeShortInline[style=style@inline]|
+    \def\shellcmd{\lstinline[style=style@inline]}
+  }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-% Code listings
-\lstdefinestyle{style@python}{
-  language     = python,
-  basewidth    = 0.54em,
-  keywordstyle = \bfseries\color{keyword},
-  commentstyle = \itshape\color{comment},
-  emphstyle    = [1]\itshape\color{emph1},
-  emphstyle    = [2]\color{emph2},
-  stringstyle  = \color{string}
-}
-\lstdefinestyle{style@shell}{
-  language     = bash,
-  alsoletter   = {-},
-  basewidth    = 0.54em,
-  keywordstyle = \bfseries\color{keyword},
-  commentstyle = \itshape\color{comment},
-  emphstyle    = [1]\itshape\color{emph1},
-  emphstyle    = [2]\color{emph2}
-}
-\lstdefinestyle{style@inline}{
-  basicstyle   = \ttfamily\color{inline},
-  keepspaces   = true
-}
-\lstnewenvironment{pycode}[1][]{\lstset{
-  style        = style@python,
-  basicstyle   = \footnotesize\ttfamily,
-  gobble       = 2,#1}}{}
-\lstnewenvironment{shcode}[1][]{\lstset{
-  style        = style@shell,
-  basicstyle   = \footnotesize\ttfamily\color{inline},
-  gobble       = 2,#1}}{}
-% % \lstMakeShortInline[style=style@inline]|
-\def\shellcmd{\lstinline[style=style@inline]}
+\ctex_at_end_package:nn { listings }
+  {
+    \@@_set_listings_color:
+    \@@_set_listings_style:
+    \@@_set_listings_env:
+  }
+\ExplSyntaxOff
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -365,8 +401,13 @@ To produce the documentation run the original source files ending with
 % \renewcommand{\emph}[1]{\begingroup\bfseries\itshape#1\endgroup}
 \newcommand{\zhparen}[1]{\textcolor{gray}{（#1）}}
 \NewDocumentCommand\vemph{O{thuviolet}m}{\textcolor{#1}{\bfseries#2}}
+%    \end{macrocode}
+%
+% \begin{macro}{\image}
+%    \begin{macrocode}
 \NewDocumentCommand\image{O{}m}{\includegraphics[width=#1\textwidth]{#2}}
 %    \end{macrocode}
+% \end{macro}
 %
 %    \begin{macrocode}
 \hypersetup{
@@ -397,7 +438,6 @@ To produce the documentation run the original source files ending with
 %
 % \subsection{\sty{shuaibeamer-op}}
 %
-% ^^A TODO: options to disable colors
 % ^^A TODO: batch generate operator commands
 %
 %
@@ -408,6 +448,18 @@ To produce the documentation run the original source files ending with
 %
 %    \begin{macrocode}
 \RequirePackage{xkcdcolors, unicode-math}
+\cs_new_eq:NN \op@textcolor \textcolor
+%    \end{macrocode}
+%
+% \opt{no-color} option will gobble the color name passed to \tn{Op}
+%    \begin{macrocode}
+\RequirePackage { l3keys2e }
+\keys_define:nn { shuaib-op }
+  { no-color .code:n = { \cs_set_eq:NN \op@textcolor \use_none:n } }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\ProcessKeysOptions { shuaib-op }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -424,36 +476,32 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_aux:n #1
+\cs_new_protected:Npn \op@subscript #1
   {
     \IfNoValueF {#1}
       {
         \int_compare:nTF { \clist_count:n {#1} = 1 }
           { \@@_is_num:nT {#1} {+}
-          \mode_if_math:F {\tl_show:n{no}} #1 }
+            \mode_if_math:F {\tl_show:n{no}} #1 }
           { + \clist_use:Nn #1 { } }
       }
   }
 %    \end{macrocode}
 %
-%    \begin{macrocode}
-\cs_new_eq:NN \op@subscript \@@_aux:n
-%    \end{macrocode}
-%
+% Deactivate L3 to enable |_| for math subscripts
 %    \begin{macrocode}
 \ExplSyntaxOff
-% to enable _ for math subscripts
 %    \end{macrocode}
 %
+% 1: whether use hat
+% 2: color
+% 3: operator name
+% 4: main subscript
+% 5: dagger symbol
+% 6: hopping number, additional subscript
 %    \begin{macrocode}
 \NewDocumentCommand\Op{ s m m m t+ o }{
-  % #1: whether use hat
-  % #2: color
-  % #3: operator name
-  % #4: main subscript
-  % #5: \dagger symbol
-  % #6: hopping number, additional subscript
-  \textcolor{#2}{
+  \op@textcolor{#2}{
       \IfBooleanF {#1} {\hat} {#3} _ { #4 \op@subscript{#6} }
       \IfBooleanT {#5} { ^{\dagger} }
     }
@@ -462,6 +510,7 @@ To produce the documentation run the original source files ending with
 %
 %    \begin{macrocode}
 \newcommand{\Opp}{\Op{xkcdLightBrown}{p}}
+\newcommand{\Ops}{\Op{black}{\sigma}}
 %    \end{macrocode}
 %
 % Operators with second quantization.
@@ -470,6 +519,7 @@ To produce the documentation run the original source files ending with
 \newcommand{\Opb}{\Op{xkcdMarineBlue!90}{b}}
 \newcommand{\Opc}{\Op{xkcdBritishRacingGreen!90}{c}}
 \newcommand{\Ope}{\Op*{xkcdUmber}{\varepsilon}}
+\newcommand{\Opn}{\Op{xkcdGrape}{n}}
 %% tests: \[ \Opam \Opam+[1] \Opam[\uparrow] \Opam[2,\uparrow] \]
 %    \end{macrocode}
 %
