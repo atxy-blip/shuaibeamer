@@ -41,7 +41,7 @@ To produce the documentation run the original source files ending with
 %
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<*!(driver|install)>
-%<+!driver>\GetIdInfo $Id: shuaibeamer.dtx 0.3.0 2024-04-28 20:30:00
+%<+!driver>\GetIdInfo $Id: shuaibeamer.dtx 0.4.0 2024-06-27 15:30:00
 %<+!driver>  +0800 atxy <y-xiong22@mails.tsinghua.edu.cn>$
 %<class>  {Beamer Template for Weekly Reports at Shuai Group}
 %<class>\ProvidesExplClass{shuaibeamer}
@@ -89,7 +89,8 @@ To produce the documentation run the original source files ending with
     symb  .initial:n = { true },
     op   .bool_set:N = \g_@@_load_op_bool,
     op    .initial:n = { true },
-    no-color .code:n = { \PassOptionsToPackage { no-color } { shuaibeamer-op } }
+    no-color .code:n = { \PassOptionsToPackage { no-color     } { shuaibeamer-op   } },
+    h-style  .code:n = { \PassOptionsToPackage { h-style = #1 } { shuaibeamer-symb } }
   }
 %    \end{macrocode}
 %
@@ -97,11 +98,12 @@ To produce the documentation run the original source files ending with
 \ProcessKeysOptions { shuaib }
 %    \end{macrocode}
 %
+% The \qty{9}{pt} option requires \pkg{extsizes}.
 %    \begin{macrocode}
 \PassOptionsToClass { onlytextwidth } { beamer }
 \PassOptionsToClass
   {
-    10pt,
+    9pt,
     fontset=none,
     aspectratio=169
   }
@@ -169,10 +171,15 @@ To produce the documentation run the original source files ending with
 %
 % Beamer fonts
 %    \begin{macrocode}
-\setbeamerfont{title}{size=\Huge, series=\bfseries}
-\setbeamerfont*{subtitle}{size=\Large, shape=\itshape}
-\setbeamerfont{author}{size=\Large}
-\setbeamerfont{date}{size=\Large}
+\newcommand{\sb@Large}{\fontsize{14.4pt }{14.4pt}\selectfont}
+\newcommand{\sb@Huge}{\fontsize{24.88pt }{24.88pt}\selectfont}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\setbeamerfont{title}{size=\sb@Huge, series=\bfseries}
+\setbeamerfont*{subtitle}{size=\sb@Large, shape=\itshape}
+\setbeamerfont{author}{size=\sb@Large}
+\setbeamerfont{date}{size=\sb@Large}
 \setbeamerfont{section title}{size=\Huge, series=\bfseries}
 \setbeamerfont{frametitle}{size=\large, series=\bfseries}
 \setbeamerfont{caption}{size=\footnotesize, series=\bfseries}
@@ -418,11 +425,12 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \newcommand{\lastpage}[1]{
   \begingroup
+  \hypersetup{colorlinks=false, hidelinks}
   \setbeamertemplate{frame numbering}[none]
   \setbeamercolor{frametitle}{fg=white, bg={}}
   \begin{frame}[standout]{#1}
     \vspace*{.6cm}
-    \Huge
+    \sb@Huge
     % \hphantom{！}
     欢迎指正！ \par
     \vspace*{0.2cm}
@@ -494,16 +502,19 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 % 1: whether use hat
-% 2: color
-% 3: operator name
-% 4: main subscript
-% 5: dagger symbol
-% 6: hopping number, additional subscript
+% 2: optional operator decoration
+% 3: color
+% 4: operator name
+% 5: main superscript
+% 6: main subscript
+% 7: dagger symbol
+% 8: hopping number, additional subscript
 %    \begin{macrocode}
-\NewDocumentCommand\Op{ s m m m t+ o }{
-  \op@textcolor{#2}{
-      \IfBooleanF {#1} {\hat} {#3} _ { #4 \op@subscript{#6} }
-      \IfBooleanT {#5} { ^{\dagger} }
+\NewDocumentCommand\Op{ s O{} m m O{} m t+ o }{
+  \op@textcolor{#3}{
+      \IfBooleanF {#1} {\hat} { #2 {#4} }
+      _ { #6 \op@subscript {#8} }
+      ^ { #5 \IfBooleanT {#7} {\dagger} }
     }
 }
 %    \end{macrocode}
@@ -524,6 +535,12 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 %    \begin{macrocode}
+% \NewDocumentCommand{\comm}{smm}{
+%   \IfBooleanTF {#1} {\ab\{\:#2,~#3\:\}} {\ab[\:#2,~#3\:]}
+% }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 %</operator>
 %    \end{macrocode}
 %
@@ -533,6 +550,20 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 %<*symbol>
 %<@@=sbsymb>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\RequirePackage { l3keys2e }
+\keys_define:nn { shuaib-symb }
+  {
+    h-style .choices:nn = { cal, hat }
+      { \tl_set_eq:NN \sb@h@style \l_keys_choice_tl },
+    h-style .initial:n  = hat
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\ProcessKeysOptions { shuaib-symb }
 %    \end{macrocode}
 %
 % We do not need L3 features in this package.
@@ -564,12 +595,28 @@ To produce the documentation run the original source files ending with
   \renewcommand{\Im}{\operatorname{Im}}
 
   \renewcommand\vec{\symbf}
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
   \newcommand{\Hcal}{\mathcal{H}}
-  \NewDocumentCommand{\Ham}{sm}{
-    \IfBooleanTF{#1} {\Hcal_{#2}} {\Hcal_{\mathrm{#2}}}
+  \newcommand{\Hhat}{\hat{H}}
+%    \end{macrocode}
+%
+% 1: whether use subscript
+% 2: optional H representation
+% 3: whether use math Roman style in subscript
+% 4: the subscript itself
+%    \begin{macrocode}
+  \NewDocumentCommand{\Ham}{ s O{\csname H\sb@h@style\endcsname} }{
+    #2 \IfBooleanF{#1} {\sb@ham@aux}
   }
 }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+  \NewDocumentCommand{\sb@ham@aux}{ t+ m }{
+    _{\IfBooleanF{#1}{\mathrm} {#2} }
+  }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
