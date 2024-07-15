@@ -259,6 +259,22 @@ To produce the documentation run the original source files ending with
 \def\footnoterule{}
 %    \end{macrocode}
 %
+% Compress footnote height
+%    \begin{macrocode}
+\defbeamertemplate{footline}{new}{%
+  \begin{beamercolorbox}[wd=\textwidth, sep=3ex]{footline}
+    \vspace*{-0.4cm}
+    \usebeamerfont{page number in head/foot}
+    \usebeamertemplate*{frame footer}
+    \hrule height 0pt width 2cm \relax
+    \hfill
+    \usebeamertemplate*{frame numbering}
+  \end{beamercolorbox}
+}
+\setbeamertemplate{footline}[new]
+\addtobeamertemplate{footnote}{\vspace*{0.4cm}}{}
+%    \end{macrocode}
+%
 % Fonts
 %    \begin{macrocode}
 \setmainfont{LibertinusSerif}[
@@ -378,6 +394,19 @@ To produce the documentation run the original source files ending with
 \ExplSyntaxOff
 %    \end{macrocode}
 %
+% Hanged indent in footnote.
+%    \begin{macrocode}
+\setbeamertemplate{footnote}{%
+  \parindent \z@\noindent%
+  \raggedright
+  \usebeamercolor{footnote}
+  \hbox to 0.8em{\hfil\insertfootnotemark}
+  \parbox{\textwidth-0.8em}{\insertfootnotetext}\par%
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\unfootnote}
+% Unnumbered footnote
 %    \begin{macrocode}
 \newcommand\unfootnote[1]{%
   \begingroup
@@ -390,6 +419,7 @@ To produce the documentation run the original source files ending with
   \endgroup
 }
 %    \end{macrocode}
+% \end{macro}
 %
 %    \begin{macrocode}
 % https://tex.stackexchange.com/q/21598/
@@ -581,8 +611,8 @@ To produce the documentation run the original source files ending with
 \RequirePackage{etoolbox}
 
 \AtBeginDocument{
-  % commands should be defined
-  % after unicode-math is fully loaded?
+% commands should be defined
+% after unicode-math is fully loaded?
 
   \let\Ua\uparrow
   \let\Da\downarrow
@@ -620,16 +650,16 @@ To produce the documentation run the original source files ending with
 % 4: the subscript itself
 %    \begin{macrocode}
 \NewDocumentCommand{\Ham}{ s O{\csname sb@ham@\sb@h@style\endcsname} }{
-    #2 \IfBooleanF{#1} {\sb@ham@aux}
+  #2 \IfBooleanF{#1} {\sb@ham@aux}
 }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\sb@ham@aux}
 %    \begin{macrocode}
-  \NewDocumentCommand{\sb@ham@aux}{ t+ m }{
-    _{\IfBooleanF{#1}{\mathrm} {#2} }
-  }
+\NewDocumentCommand{\sb@ham@aux}{ t+ m }{
+  _{\IfBooleanF{#1}{\mathrm} {#2} }
+}
 %    \end{macrocode}
 % \end{macro}
 %
