@@ -41,7 +41,7 @@ To produce the documentation run the original source files ending with
 %
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<*!(driver|install)>
-%<+!driver>\GetIdInfo $Id: shuaibeamer.dtx 0.4.0 2024-06-27 15:30:00
+%<+!driver>\GetIdInfo $Id: shuaibeamer.dtx 0.4.1 2024-07-15 11:00:00
 %<+!driver>  +0800 atxy <y-xiong22@mails.tsinghua.edu.cn>$
 %<class>  {Beamer Template for Weekly Reports at Shuai Group}
 %<class>\ProvidesExplClass{shuaibeamer}
@@ -470,8 +470,10 @@ To produce the documentation run the original source files ending with
 \ProcessKeysOptions { shuaib-op }
 %    \end{macrocode}
 %
+%
+% \url{https://tex.stackexchange.com/a/17119}
+% \begin{macro}{\@@_is_num:n}
 %    \begin{macrocode}
-% https://tex.stackexchange.com/a/17119
 \prg_set_conditional:Npnn \@@_is_num:n #1 { T }
   {
     \sbox \z@{\@tempcnta=0#1\relax}
@@ -482,7 +484,9 @@ To produce the documentation run the original source files ending with
     \fi:
   }
 %    \end{macrocode}
+% \end{macro}
 %
+% \begin{macro}{\op@subscript}
 %    \begin{macrocode}
 \cs_new_protected:Npn \op@subscript #1
   {
@@ -495,12 +499,15 @@ To produce the documentation run the original source files ending with
       }
   }
 %    \end{macrocode}
+% \end{macro}
 %
 % Deactivate L3 to enable |_| for math subscripts
 %    \begin{macrocode}
 \ExplSyntaxOff
 %    \end{macrocode}
 %
+%
+% \begin{macro}{\Op}
 % 1: whether use hat
 % 2: optional operator decoration
 % 3: color
@@ -518,10 +525,11 @@ To produce the documentation run the original source files ending with
     }
 }
 %    \end{macrocode}
+% \end{macro}
 %
 %    \begin{macrocode}
 \newcommand{\Opp}{\Op{xkcdLightBrown}{p}}
-\newcommand{\Ops}{\Op{black}{\sigma}}
+\newcommand{\Ops}{\Op{xkcdBrown}{\sigma}}
 %    \end{macrocode}
 %
 % Operators with second quantization.
@@ -594,30 +602,36 @@ To produce the documentation run the original source files ending with
   \renewcommand{\Re}{\operatorname{Re}}
   \renewcommand{\Im}{\operatorname{Im}}
 
-  \renewcommand\vec{\symbf}
+  \renewcommand{\vec}{\symbf}
+}
 %    \end{macrocode}
 %
+% \begin{macro}{\sb@ham@cal, \sb@ham@hat}
 %    \begin{macrocode}
-  \newcommand{\Hcal}{\mathcal{H}}
-  \newcommand{\Hhat}{\hat{H}}
+\newcommand{\sb@ham@cal}{\mathcal{H}}
+\newcommand{\sb@ham@hat}{\hat{H}}
 %    \end{macrocode}
+% \end{macro}
 %
+% \begin{macro}{\Ham}
 % 1: whether use subscript
 % 2: optional H representation
 % 3: whether use math Roman style in subscript
 % 4: the subscript itself
 %    \begin{macrocode}
-  \NewDocumentCommand{\Ham}{ s O{\csname H\sb@h@style\endcsname} }{
+\NewDocumentCommand{\Ham}{ s O{\csname sb@ham@\sb@h@style\endcsname} }{
     #2 \IfBooleanF{#1} {\sb@ham@aux}
-  }
 }
 %    \end{macrocode}
+% \end{macro}
 %
+% \begin{macro}{\sb@ham@aux}
 %    \begin{macrocode}
   \NewDocumentCommand{\sb@ham@aux}{ t+ m }{
     _{\IfBooleanF{#1}{\mathrm} {#2} }
   }
 %    \end{macrocode}
+% \end{macro}
 %
 %    \begin{macrocode}
 %</symbol>
