@@ -152,6 +152,15 @@ To produce the documentation run the original source files ending with
 % \renewbibmacro*{editor}{}
 %    \end{macrocode}
 %
+% Link article title to DOI\footnote{\url{https://tex.stackexchange.com/a/23843/251992}}
+%    \begin{macrocode}
+\ExecuteBibliographyOptions{doi=false}
+\newbibmacro{string+doi}[1]{%
+  \iffieldundef{doi}{#1}{\href{http://dx.doi.org/\thefield{doi}}{#1}}}
+\DeclareFieldFormat{title}{\usebibmacro{string+doi}{\mkbibemph{#1}}}
+\DeclareFieldFormat[article]{title}{\usebibmacro{string+doi}{\mkbibquote{#1}}}
+%    \end{macrocode}
+%
 %    \begin{macrocode}
 \definecolor { thuviolet } { HTML } { 660874 }
 %    \end{macrocode}
