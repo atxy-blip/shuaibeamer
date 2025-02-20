@@ -163,6 +163,7 @@ To produce the documentation run the original source files ending with
 %
 %    \begin{macrocode}
 \definecolor { thuviolet } { HTML } { 660874 }
+\definecolor { thupink   } { HTML } { d93379 }
 %    \end{macrocode}
 %
 % Beamer colors
@@ -178,10 +179,19 @@ To produce the documentation run the original source files ending with
 \setbeamercolor{title separator}{fg=thuviolet}
 %    \end{macrocode}
 %
+% Remove progress bar
+%    \begin{macrocode}
+\metroset{progressbar=none}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\setlength{\metropolis@titleseparator@linewidth}{1pt}
+%    \end{macrocode}
+%
 % Beamer fonts
 %    \begin{macrocode}
-\newcommand{\sb@Large}{\fontsize{14.4pt }{14.4pt}\selectfont}
-\newcommand{\sb@Huge}{\fontsize{24.88pt }{24.88pt}\selectfont}
+\newcommand{\sb@Large}{\fontsize{14.4pt}{14.4pt}\selectfont}
+\newcommand{\sb@Huge}{\fontsize{24.88pt}{24.88pt}\selectfont}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -196,15 +206,6 @@ To produce the documentation run the original source files ending with
 \setbeamerfont{footnote}{size=\tiny}
 % \setbeamercolor{footnote}{fg=red}
 \setbeamerfont{alerted text}{series=\bfseries}
-%    \end{macrocode}
-%
-% Remove progress bar
-%    \begin{macrocode}
-\metroset{progressbar=none}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\setlength{\metropolis@titleseparator@linewidth}{1pt}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -400,8 +401,13 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 \NewDocumentCommand \spreadbox { O{\bfseries} m m }
   { \@@_spread_box:nnn {#2} {#1} {#3} }
-\ExplSyntaxOff
 %    \end{macrocode}
+%
+%    \begin{macrocode}
+\NewDocumentCommand \email { m }
+  { \def\sb@email{#1} }
+%    \end{macrocode}
+\ExplSyntaxOff
 %
 % Hanged indent in footnote.
 %    \begin{macrocode}
@@ -409,20 +415,30 @@ To produce the documentation run the original source files ending with
   \parindent \z@\noindent%
   \raggedright
   \usebeamercolor{footnote}
-  \hbox to 0.8em{\hfil\insertfootnotemark}
-  \parbox{\textwidth-0.8em}{\insertfootnotetext}\par%
+  \hskip -1.3em\hbox to 0.8em{\hfil\insertfootnotemark}
+  %\parbox{\textwidth-0.8em}{\insertfootnotetext}
+  \insertfootnotetext\par%
 }
 %    \end{macrocode}
+%
+% \begin{macro}{\bibfootnotesize}
+% Bib entry in footnotesize
+%    \begin{macrocode}
+\newcommand\bibfootnotesize{
+  \setbeamerfont*{bibliography entry author}{size=\beamer@thmfsize@footnote,series=\normalfont}
+  \setbeamerfont*{bibliography entry title}{size=\beamer@thmfsize@footnote,series=\bfseries}
+  \setbeamerfont*{bibliography entry location}{size=\beamer@thmfsize@footnote,series=\normalfont}
+  \setbeamerfont*{bibliography entry note}{size=\beamer@thmfsize@footnote,series=\normalfont}
+}
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\unfootnote}
 % Unnumbered footnote
 %    \begin{macrocode}
 \newcommand\unfootnote[1]{%
   \begingroup
-    \setbeamerfont*{bibliography entry author}{size=\beamer@thmfsize@footnote,series=\normalfont}
-    \setbeamerfont*{bibliography entry title}{size=\beamer@thmfsize@footnote,series=\bfseries}
-    \setbeamerfont*{bibliography entry location}{size=\beamer@thmfsize@footnote,series=\normalfont}
-    \setbeamerfont*{bibliography entry note}{size=\beamer@thmfsize@footnote,series=\normalfont}
+    \bibfootnotesize
     \renewcommand\thefootnote{}\footnote{#1}%
     \addtocounter{footnote}{-1}%
   \endgroup
