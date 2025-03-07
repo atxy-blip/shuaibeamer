@@ -103,7 +103,7 @@ To produce the documentation run the original source files ending with
 \PassOptionsToClass { onlytextwidth } { beamer }
 \PassOptionsToClass
   {
-    9pt,
+    8pt,
     fontset=none,
     aspectratio=169
   }
@@ -159,6 +159,26 @@ To produce the documentation run the original source files ending with
   \iffieldundef{doi}{#1}{\href{http://dx.doi.org/\thefield{doi}}{#1}}}
 \DeclareFieldFormat{title}{\usebibmacro{string+doi}{\mkbibemph{#1}}}
 \DeclareFieldFormat[article]{title}{\usebibmacro{string+doi}{\mkbibquote{#1}}}
+%    \end{macrocode}
+%
+% Use abbreviated journal title\url{https://tex.stackexchange.com/a/31635/251992}
+%    \begin{macrocode}
+\renewbibmacro*{journal}{%
+  \iffieldundef{shortjournal}
+    {%
+      \iffieldundef{journaltitle}
+        {}
+        {%
+          \printtext[journaltitle]
+            {%
+              \printfield[titlecase]{journaltitle}%
+              \setunit{\subtitlepunct}%
+              \printfield[titlecase]{journalsubtitle}%
+             }%
+         }%
+    }
+    {\printtext[journaltitle]{\printfield[titlecase]{shortjournal}}}%
+}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
