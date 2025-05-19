@@ -530,15 +530,29 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 %
 %    \begin{macrocode}
+\RequirePackage { l3keys2e }
+\keys_define:nn { shuaib-op }
+  {
+    hamiltonian-style .choices:nn = { cal, hat, plain }
+      { \tl_set_eq:NN \l_@@_ham_style_tl \l_keys_choice_tl },
+    hamiltonian-style .initial:n  = hat
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\ProcessKeysOptions { shuaib-op }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \RequirePackage{xkcdcolors, unicode-math}
-\cs_new_eq:NN \op@textcolor \textcolor
+\cs_new_eq:NN \@@_textcolor:nn \textcolor
 %    \end{macrocode}
 %
 % \opt{no-color} option will gobble the color name passed to \tn{Op}
 %    \begin{macrocode}
 \RequirePackage { l3keys2e }
 \keys_define:nn { shuaib-op }
-  { no-color .code:n = { \cs_set_eq:NN \op@textcolor \use_none:n } }
+  { no-color .code:n = { \cs_set_eq:NN \@@_textcolor:nn \use_none:n } }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -561,9 +575,9 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\op@subscript}
+% \begin{macro}{\@@_subscript:n}
 %    \begin{macrocode}
-\cs_new_protected:Npn \op@subscript #1
+\cs_new_protected:Npn \@@_subscript:n #1
   {
     \IfNoValueF {#1}
       {
@@ -576,29 +590,28 @@ To produce the documentation run the original source files ending with
 %    \end{macrocode}
 % \end{macro}
 %
-% Deactivate L3 to enable |_| for math subscripts
-%    \begin{macrocode}
-\ExplSyntaxOff
-%    \end{macrocode}
-%
 %
 % \begin{macro}{\Op}
-% 1: whether use hat
-% 2: optional operator decoration
-% 3: color
-% 4: operator name
-% 5: main superscript
-% 6: main subscript
-% 7: dagger symbol
-% 8: hopping number, additional subscript
+% \begin{arguments}
+%   \item whether use hat
+%   \item optional operator decoration
+%   \item color
+%   \item operator name
+%   \item main superscript
+%   \item main subscript
+%   \item dagger symbol
+%   \item hopping number, additional subscript
+% \end{arguments}
 %    \begin{macrocode}
-\NewDocumentCommand\Op{ s O{} m m O{} m t+ o }{
-  \op@textcolor{#3}{
-      \IfBooleanF {#1} {\hat} { #2 {#4} }
-      _ { #6 \op@subscript {#8} }
-      ^ { #5 \IfBooleanT {#7} {\dagger} }
-    }
-}
+\NewDocumentCommand \Op { s O{} m m O{} m !t+ o }
+  {
+    \@@_textcolor:nn { #3 }
+      {
+        \IfBooleanF {#1} { \hat } { #2 {#4} }
+        \sb { #6 \@@_subscript:n {#8} }
+        \sp { #5 \IfBooleanT {#7} { \dagger } }
+      }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -617,6 +630,43 @@ To produce the documentation run the original source files ending with
 %% tests: \[ \Opam \Opam+[1] \Opam[\uparrow] \Opam[2,\uparrow] \]
 %    \end{macrocode}
 %
+% \begin{macro}{\c_@@_ham_cal_tl, \c_@@_ham_hat_tl, \c_@@_ham_plain_tl}
+%    \begin{macrocode}
+\tl_const:Nn \c_@@_ham_cal_tl   { \mathcal {H} }
+\tl_const:Nn \c_@@_ham_hat_tl   { \hat     {H} }
+\tl_const:Nn \c_@@_ham_plain_tl {           H  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\Hamiltonian}
+% \begin{arguments}
+%   \item H representation
+%   \item whether use math Roman style in subscript
+%   \item the subscript itself
+%   \item the superscript
+% \end{arguments}
+% Since the subscript of a Hamiltonian is optional,
+% it should be implemented with an optional argument.
+% \footnote{A discussion about whether to use g-type argument for this
+% \url{https://chat.stackexchange.com/rooms/116536/}}
+%    \begin{macrocode}
+\NewDocumentCommand \Hamiltonian { m t+ o o }
+  {
+    \begingroup
+    #1 \IfNoValueF {#3} { \sb { \IfBooleanF {#2} { \mathrm } {#3} } }
+    \IfNoValueF {#4} { \sp {#4} }
+    \endgroup
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\Ham}
+%    \begin{macrocode}
+\cs_new:Npn \Ham
+  { \exp_args:Nc \Hamiltonian { c_@@_ham_ \l_@@_ham_style_tl _tl } }
+%    \end{macrocode}
+% \end{macro}
+%
 %    \begin{macrocode}
 % \NewDocumentCommand{\comm}{smm}{
 %   \IfBooleanTF {#1} {\ab\{\:#2,~#3\:\}} {\ab[\:#2,~#3\:]}
@@ -633,20 +683,6 @@ To produce the documentation run the original source files ending with
 %    \begin{macrocode}
 %<*symbol>
 %<@@=sbsymb>
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\RequirePackage { l3keys2e }
-\keys_define:nn { shuaib-symb }
-  {
-    h-style .choices:nn = { cal, hat }
-      { \tl_set_eq:NN \sb@h@style \l_keys_choice_tl },
-    h-style .initial:n  = hat
-  }
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\ProcessKeysOptions { shuaib-symb }
 %    \end{macrocode}
 %
 % We do not need L3 features in this package.
@@ -680,33 +716,6 @@ To produce the documentation run the original source files ending with
   \renewcommand{\vec}{\symbf}
 }
 %    \end{macrocode}
-%
-% \begin{macro}{\sb@ham@cal, \sb@ham@hat}
-%    \begin{macrocode}
-\newcommand{\sb@ham@cal}{\mathcal{H}}
-\newcommand{\sb@ham@hat}{\hat{H}}
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\Ham}
-% 1: whether use subscript
-% 2: optional H representation
-% 3: whether use math Roman style in subscript
-% 4: the subscript itself
-%    \begin{macrocode}
-\NewDocumentCommand{\Ham}{ s O{\csname sb@ham@\sb@h@style\endcsname} }{
-  #2 \IfBooleanF{#1} {\sb@ham@aux}
-}
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\sb@ham@aux}
-%    \begin{macrocode}
-\NewDocumentCommand{\sb@ham@aux}{ t+ m }{
-  _{\IfBooleanF{#1}{\mathrm} {#2} }
-}
-%    \end{macrocode}
-% \end{macro}
 %
 %    \begin{macrocode}
 %</symbol>
